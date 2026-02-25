@@ -1,6 +1,6 @@
 import { useUpdateProfile, useUserProfile } from "@/hooks/use-user";
 import Avatar from "@/module/profile/Avatar";
-import ProfileInputButton from "@/module/profile/profile-input-button";
+import ProfileInputButton from "@/module/profile/ProfileInputButton";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";

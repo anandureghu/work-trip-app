@@ -1,26 +1,25 @@
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { UserProfile } from "@/types/user.types";
 import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 
 interface AvatarProps {
+  user?: UserProfile | null;
   showEditButton?: boolean;
+  onEditPress?: () => void;
 }
 
-const Avatar = ({ showEditButton = false }: AvatarProps) => {
-  const user = {
-    image: "https://i.pravatar.cc/300",
-    name: "Alex",
-    date: "Oct 24, Tuesday",
-    hours: "6h 12m",
-    miles: "45.2 mi",
-    duration: "03:15:20",
-    location: "I-5 Southbound, Mile 42",
-  };
+const Avatar = ({ user, showEditButton = false, onEditPress }: AvatarProps) => {
   return (
     <View className="gap-3 items-center">
       <View className="relative">
         <Image
-          source={{ uri: user.image }}
+          source={
+            user?.avatar_url
+              ? { uri: user.avatar_url }
+              : require("@/assets/default-avatar.png")
+          }
+          alt="Avatar"
           style={{ width: 150, height: 150, borderRadius: 75 }}
         />
         {showEditButton && (
@@ -32,7 +31,7 @@ const Avatar = ({ showEditButton = false }: AvatarProps) => {
               borderRadius: "50%",
             }}
             activeOpacity={0.8}
-            onPress={() => console.log("edit avatar")}
+            onPress={onEditPress}
             className="absolute bottom-[2px] right-[0px] rounded-full items-center justify-center"
           >
             <IconSymbol
