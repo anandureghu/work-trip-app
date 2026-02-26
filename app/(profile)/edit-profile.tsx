@@ -2,7 +2,6 @@ import Avatar from "@/components/Avatar";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import ProfileForm from "@/module/profile/components/ProfileForm";
 import { useEditUserMutation, useUserQuery } from "@/module/profile/hooks";
-import { User } from "@/module/profile/schemas/user.schema";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
@@ -43,7 +42,6 @@ const EditProfile = () => {
         />
       </View>
       <ProfileForm
-        user={user as User}
         onSubmit={(data) => {
           if (!user?.auth_user_id) {
             toast.error("No Active Session");
