@@ -22,7 +22,6 @@ export type User = z.infer<typeof userSchema>;
 
 export const userEditSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").optional(),
-  // email: z.email(),
   phone: z.string().nullable().optional(),
   avatar_url: z.string().optional(),
   is_active: z.boolean().optional(),
