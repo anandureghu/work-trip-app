@@ -9,7 +9,7 @@ const flags = [
 ];
 
 const LanguagePicker = () => {
-  const [language, setLanguage] = useState("English");
+  const [language, setLanguage] = useState(flags[0].language);
   const handleLanguage = (value: string) => {
     setLanguage(value);
   };

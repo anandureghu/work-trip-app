@@ -18,16 +18,11 @@ export const userApi = {
     return userSchema.parse(data);
   },
 
-  async edit(data: UserEdit): Promise<User> {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw new Error("No active session");
-
+  async edit(id: string, data: UserEdit): Promise<User> {
     const { data: userData, error } = await supabase
       .from("users")
       .update(data)
-      .eq("auth_user_id", user.id)
+      .eq("auth_user_id", id)
       .select()
       .single();
 

@@ -2,7 +2,7 @@ import Avatar from "@/components/Avatar";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import ProfileForm from "@/module/profile/components/ProfileForm";
 import { useEditUserMutation, useUserQuery } from "@/module/profile/hooks";
-import { User, UserEdit } from "@/module/profile/schemas/user.schema";
+import { User } from "@/module/profile/schemas/user.schema";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
@@ -16,8 +16,12 @@ const EditProfile = () => {
     bucket: "avatars",
     path: user?.id,
     onUpload: (url) => {
+      if (!user?.auth_user_id) {
+        toast.error("No Active Session");
+        return;
+      }
       updateMutation.mutate(
-        { avatar_url: url },
+        { id: user.auth_user_id, data: { avatar_url: url } },
         {
           onSuccess: () => {
             toast.success("Profile Picture Updated");
@@ -41,12 +45,19 @@ const EditProfile = () => {
       <ProfileForm
         user={user as User}
         onSubmit={(data) => {
-          updateMutation.mutate(data as UserEdit, {
-            onSuccess: () => {
-              toast.success("Profile Updated Successfully");
-              router.navigate("/(tabs)/profile");
+          if (!user?.auth_user_id) {
+            toast.error("No Active Session");
+            return;
+          }
+          updateMutation.mutate(
+            { id: user.auth_user_id, data: data },
+            {
+              onSuccess: () => {
+                toast.success("Profile Updated Successfully");
+                router.navigate("/(tabs)/profile");
+              },
             },
-          });
+          );
         }}
         isSubmitting={updateMutation.isPending}
       />

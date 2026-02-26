@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import { View } from "react-native";
 import { useUserForm } from "../hooks";
@@ -14,7 +14,6 @@ interface ProfileFormProps {
 
 const ProfileForm = ({ user, onSubmit, isSubmitting }: ProfileFormProps) => {
   const { handleSubmit, control, reset } = useUserForm(user as UserEdit);
-  const [email, setEmail] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -22,7 +21,6 @@ const ProfileForm = ({ user, onSubmit, isSubmitting }: ProfileFormProps) => {
         name: user.name,
         phone: user.phone,
       });
-      setEmail(user.email);
     }
   }, [user, reset]);
   return (
@@ -36,7 +34,7 @@ const ProfileForm = ({ user, onSubmit, isSubmitting }: ProfileFormProps) => {
           )}
         />
 
-        <Input value={email} editable={false} label="Email" />
+        <Input value={user?.email} disabled={true} label="Email" />
 
         <Controller
           name="phone"

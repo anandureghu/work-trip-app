@@ -17,11 +17,12 @@ export const useUserQuery = () =>
 export const useEditUserMutation = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: userApi.edit,
+    mutationFn: ({ id, data }: { id: string; data: UserEdit }) =>
+      userApi.edit(id, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: userKeys.all });
     },
-    onError: () => toast.error("Failed to update profile. Pleas try again"),
+    onError: (e) => toast.error("Failed to update profile. Please try again"),
   });
 };
 

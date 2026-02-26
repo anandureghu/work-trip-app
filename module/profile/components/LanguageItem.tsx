@@ -1,3 +1,4 @@
+import { APP_COLORS } from "@/lib/consts";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -29,7 +30,9 @@ const LanguageItem = ({
         </Text>
       </TouchableOpacity>
       <View style={{ width: 16 }}>
-        {active && <Ionicons name="checkmark" size={15} color={"#fff"} />}
+        {active && (
+          <Ionicons name="checkmark" size={15} color={APP_COLORS.white} />
+        )}
       </View>
     </View>
   );

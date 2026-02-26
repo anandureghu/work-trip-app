@@ -4,7 +4,7 @@ import { Text, TextInput, View } from "react-native";
 interface InputProps {
   label: string;
   value: any;
-  editable?: boolean;
+  disabled?: boolean;
   onChange?: (text: string) => void;
   onBlur?: () => void;
   error?: string;
@@ -14,7 +14,7 @@ const Input = ({
   label,
   value,
   onChange,
-  editable = true,
+  disabled = false,
   onBlur,
   error,
 }: InputProps) => {
@@ -24,7 +24,7 @@ const Input = ({
       <TextInput
         className="text-textPrimary text-lg px-3"
         value={value}
-        editable={editable}
+        editable={!disabled}
         onChangeText={onChange}
         onBlur={onBlur}
       />
