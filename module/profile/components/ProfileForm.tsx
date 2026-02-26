@@ -3,16 +3,16 @@ import Input from "@/components/Input";
 import React, { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import { View } from "react-native";
-import { useUserForm } from "../hooks";
-import { User, UserEdit } from "../schemas/user.schema";
+import { useUserForm, useUserQuery } from "../hooks";
+import { UserEdit } from "../schemas/user.schema";
 
 interface ProfileFormProps {
-  user: User | null;
   onSubmit: (data: UserEdit) => void;
   isSubmitting: boolean;
 }
 
-const ProfileForm = ({ user, onSubmit, isSubmitting }: ProfileFormProps) => {
+const ProfileForm = ({ onSubmit, isSubmitting }: ProfileFormProps) => {
+  const { data: user } = useUserQuery();
   const { handleSubmit, control, reset } = useUserForm(user as UserEdit);
 
   useEffect(() => {
