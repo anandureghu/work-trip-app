@@ -28,12 +28,12 @@ const LanguageItem = ({
         <Text className="text-textPrimary font-semibold text-lg w-8">
           {language}
         </Text>
+        <View style={{ width: 16 }}>
+          {active && (
+            <Ionicons name="checkmark" size={15} color={APP_COLORS.white} />
+          )}
+        </View>
       </TouchableOpacity>
-      <View style={{ width: 16 }}>
-        {active && (
-          <Ionicons name="checkmark" size={15} color={APP_COLORS.white} />
-        )}
-      </View>
     </View>
   );
 };
