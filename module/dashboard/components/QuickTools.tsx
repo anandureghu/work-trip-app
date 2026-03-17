@@ -1,6 +1,6 @@
-import QuickToolCard from "@/components/dashboard/QuickToolCard";
 import TitleLabel from "@/components/title-label";
 import { APP_COLORS } from "@/lib/consts";
+import QuickToolCard from "@/module/dashboard/components/QuickToolCard";
 import React from "react";
 import { View } from "react-native";
 

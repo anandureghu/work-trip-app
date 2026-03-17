@@ -1,5 +1,6 @@
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -62,6 +63,12 @@ const ProfileForm = ({ onSubmit, isSubmitting }: ProfileFormProps) => {
         text={t("edit_profile.save")}
         onPress={handleSubmit((data) => onSubmit(data))}
         disabled={isSubmitting}
+      />
+      <Button
+        text={t("edit_profile.cancel")}
+        onPress={() => router.navigate("/profile")}
+        disabled={isSubmitting}
+        variant="danger"
       />
     </View>
   );
