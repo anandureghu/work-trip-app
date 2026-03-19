@@ -1,5 +1,5 @@
 import Avatar from "@/components/Avatar";
-import Dialog from "@/components/Dialog";
+import Dialog from "@/components/dialog";
 import ProfileButton from "@/components/MenuButton";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { APP_COLORS } from "@/lib/consts";

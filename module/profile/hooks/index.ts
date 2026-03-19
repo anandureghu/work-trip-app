@@ -9,7 +9,7 @@ import { UserEdit, userEditSchema } from "../schemas/user.schema";
 // use user queries
 export const useUserQuery = () =>
   useQuery({
-    queryKey: [...userKeys.get()],
+    queryKey: userKeys.get(),
     queryFn: () => userApi.get(),
   });
 

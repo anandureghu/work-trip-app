@@ -22,12 +22,12 @@ const DutyInfo = () => {
       >
         {/* Header */}
         <View className="flex-row items-center justify-between z-10 p-5">
-          <View>
-            <Text className="text-textPrimary text-sm bg-primary p-2 px-4 rounded-lg uppercase font-bold">
+          <View className="bg-primary p-[10px] rounded-lg">
+            <Text className="text-textPrimary text-sm uppercase font-bold">
               On Duty
             </Text>
           </View>
-          <View className="bg-textPrimary/10 w-[40px] h-[40px] rounded-full flex items-center justify-center">
+          <View className="bg-textPrimary/20 w-[40px] h-[40px] rounded-full flex items-center justify-center">
             <Ionicons
               name="map-sharp"
               size={20}

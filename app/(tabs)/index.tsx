@@ -1,6 +1,8 @@
 import { APP_COLORS } from "@/lib/consts";
+import DashboardActions from "@/module/dashboard/components/DashboardActions";
 import DutyInfo from "@/module/dashboard/components/DutyInfo";
 import QuickTools from "@/module/dashboard/components/QuickTools";
+import StartTripForm from "@/module/dashboard/components/StartTripForm";
 import TodaysActivity from "@/module/dashboard/components/TodaysActivity";
 import { useUserQuery } from "@/module/profile/hooks";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function DashboardScreen() {
   const [isOnDuty, setIsOnDuty] = useState(false);
+  const [startTripOpen, setStartTripOpen] = useState(false);
   const { data: user } = useUserQuery();
   const today = new Date();
   const formattedDate = today.toLocaleDateString(undefined, {
@@ -58,16 +61,11 @@ export default function DashboardScreen() {
       <TodaysActivity />
       <QuickTools />
 
-      <View className="flex-row gap-3 mt-5">
-        <TouchableOpacity className="bg-primary flex-1 p-5 items-center justify-center rounded-2xl">
-          <Ionicons name="send" size={24} color={APP_COLORS.textPrimary} />
-          <Text className="text-white font-semibold mt-2">Start Trip</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="flex-1 p-5 items-center justify-center rounded-2xl border border-borderSubtle bg-cardElevated">
-          <Ionicons name="stop-circle" size={28} color={APP_COLORS.danger} />
-          <Text className="text-white font-semibold mt-2">Stop Work</Text>
-        </TouchableOpacity>
-      </View>
+      <DashboardActions onStartTrip={() => setStartTripOpen(true)} />
+      <StartTripForm
+        openStartTrip={startTripOpen}
+        onStartTripClose={() => setStartTripOpen(false)}
+      />
     </SafeAreaView>
   );
 }

@@ -2,11 +2,11 @@ import TitleLabel from "@/components/title-label";
 import { APP_COLORS } from "@/lib/consts";
 import React from "react";
 import { View } from "react-native";
-import StatCard from "../../../components/dashboard/StatCard";
+import StatCard from "./StatCard";
 
 const TodaysActivity = () => {
   return (
-    <View>
+    <View className="mt-5">
       <TitleLabel title="Today's Activity" />
       <View className="flex-row items-center justify-between mt-3">
         <StatCard icon="time" label="Hours" value="6h 12m" />
