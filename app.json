@@ -52,10 +52,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "7b549ece-a96e-4fdb-9cc8-0218808af265"
+        "projectId": "085e552a-06fa-4d40-9ba4-f95378f5f5ba"
       }
     },
-    "owner": "anandureghu",
     "updates": {
       "url": "https://u.expo.dev/7b549ece-a96e-4fdb-9cc8-0218808af265"
     },
