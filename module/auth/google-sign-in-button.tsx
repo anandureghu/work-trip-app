@@ -29,7 +29,7 @@ export default function GoogleSignInButton() {
     const res = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${expo.scheme}://google-auth`,
+        redirectTo: `${expo.scheme}://`,
         queryParams: { prompt: "consent" },
         skipBrowserRedirect: true,
       },
@@ -44,7 +44,7 @@ export default function GoogleSignInButton() {
 
     const result = await WebBrowser.openAuthSessionAsync(
       googleOAuthUrl,
-      `${expo.scheme}://google-auth`,
+      `${expo.scheme}://`,
       { showInRecents: true },
     ).catch((err) => {
       console.error("onSignInButtonPress - openAuthSessionAsync - error", {

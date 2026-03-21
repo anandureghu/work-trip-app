@@ -14,9 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 export default function LoginScreen() {
-  // const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function signInWithEmail() {
@@ -54,35 +52,6 @@ export default function LoginScreen() {
             style={styles.input}
           />
         </View>
-
-        {/* Password */}
-        {/* <Text style={[styles.label, { marginTop: 20 }]}>Password</Text>
-        <View style={styles.inputWrapper}>
-          <Ionicons name="lock-closed-outline" size={20} color="#7b8ca3" />
-          <TextInput
-            placeholder="Enter password"
-            placeholderTextColor="#7b8ca3"
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-            secureTextEntry={!passwordVisible}
-            style={styles.input}
-          />
-          <TouchableOpacity
-            onPress={() => setPasswordVisible(!passwordVisible)}
-          >
-            <Ionicons
-              name={passwordVisible ? "eye-off-outline" : "eye-outline"}
-              size={20}
-              color="#7b8ca3"
-            />
-          </TouchableOpacity>
-        </View> */}
-
-        {/* Forgot */}
-        {/* <TouchableOpacity style={styles.forgotWrapper}>
-          <Text style={styles.forgot}>Forgot Password?</Text>
-        </TouchableOpacity> */}
-
         {/* Login */}
         <TouchableOpacity
           style={styles.loginButton}
