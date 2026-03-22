@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import { APP_COLORS } from "@/lib/consts";
 import { useUserQuery } from "@/module/profile/hooks";
 import TripCurrentLocation from "@/module/trip/components/TripCurrentLocation";
 import TripImageUpload from "@/module/trip/components/TripImageUpload";
@@ -18,7 +19,7 @@ import * as Location from "expo-location";
 import { router } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Controller } from "react-hook-form";
-import { ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { toast } from "sonner-native";
 
 const StartTripForm = () => {
@@ -28,17 +29,21 @@ const StartTripForm = () => {
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState<
     string | null
   >(null);
+  const [vehicle, setVehicle] = useState<Vehicle | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { handleSubmit, control } = useTripCreateForm();
   const { data: user } = useUserQuery();
-  const { mutateAsync: createTrip, isPending } = useCreateTripMutation();
-  const { mutateAsync: editTrip } = useEditTripMutation();
+  const { mutateAsync: createTrip, isPending: isCreating } =
+    useCreateTripMutation();
+  const { mutateAsync: editTrip, isPending: isEditing } = useEditTripMutation();
   const { mutateAsync: insertVehiclePhotos } = useInsertVehiclePhotosMutation();
   const { data: todayTrip } = useTodayTripQuery();
 
-  const [vehicle, setVehicle] = useState<Vehicle | undefined>(undefined);
-  const dashboardImage = useImageUpload({
-    bucket: "trip_dashboard",
-  });
+  // Single source of truth for loading
+  const isLoading = isSubmitting || isCreating || isEditing;
+
+  const dashboardImage = useImageUpload({ bucket: "trip_dashboard" });
   const frontImage = useImageUpload({ bucket: "trip_dashboard" });
   const backImage = useImageUpload({ bucket: "trip_dashboard" });
   const leftImage = useImageUpload({ bucket: "trip_dashboard" });
@@ -51,18 +56,15 @@ const StartTripForm = () => {
         toast.error("Please enable location services in your device settings");
         return;
       }
-
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         toast.error("Location permission is required to start a trip");
         return;
       }
-
       const accurate = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
       setLocation(accurate);
-
       const { latitude, longitude } = accurate.coords;
       const response = await Location.reverseGeocodeAsync({
         latitude,
@@ -86,45 +88,22 @@ const StartTripForm = () => {
   }, []);
 
   const onSubmit = async (data: any) => {
+    if (isLoading) return;
+
+    // Validate before starting any async work
+    if (todayTrip)
+      return toast.error("A trip has already been started for today");
+    if (!vehicle) return toast.error("Vehicle required");
+    if (!location)
+      return toast.error("Location permission is required to start a trip");
+    if (!dashboardImage.asset) return toast.error("Dashboard image required");
+    if (!frontImage.asset) return toast.error("Front image required");
+    if (!backImage.asset) return toast.error("Back image required");
+    if (!leftImage.asset) return toast.error("Left image required");
+    if (!rightImage.asset) return toast.error("Right image required");
+
+    setIsSubmitting(true);
     try {
-      if (todayTrip) {
-        toast.error("A trip has already been started for today");
-        return;
-      }
-
-      if (!vehicle) {
-        toast.error("Vehicle required");
-        return;
-      }
-      if (!location) {
-        toast.error("Location permission is required to start a trip");
-        return;
-      }
-      if (!dashboardImage.asset) {
-        toast.error("Dashboard Image required");
-        return;
-      }
-
-      if (!frontImage.asset) {
-        toast.error("Front Image required");
-        return;
-      }
-
-      if (!backImage.asset) {
-        toast.error("Back Image required");
-        return;
-      }
-
-      if (!leftImage.asset) {
-        toast.error("Left Image required");
-        return;
-      }
-
-      if (!rightImage.asset) {
-        toast.error("Right Image required");
-        return;
-      }
-
       const trip = await createTrip({
         ...data,
         user_id: user?.id,
@@ -143,7 +122,6 @@ const StartTripForm = () => {
           rightImage.asset ? rightImage.upload(`${trip.id}/right`) : null,
         ]);
 
-      // 3️⃣ Insert vehicle photos into vehicle_photos table
       const vehiclePhotos = [
         { trip_id: trip.id, photo_type: "FRONT", photo_url: frontUrl },
         { trip_id: trip.id, photo_type: "BACK", photo_url: backUrl },
@@ -155,19 +133,41 @@ const StartTripForm = () => {
         await insertVehiclePhotos(vehiclePhotos as VehiclePhoto[]);
       }
 
-      // // 3️⃣ Save URLs
-      await editTrip({
-        id: trip.id,
-        data: {
-          start_image: startUrl,
-        },
-      });
+      await editTrip({ id: trip.id, data: { start_image: startUrl } });
+
       toast.success("Trip started successfully");
       router.navigate("/(tabs)");
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: APP_COLORS.background,
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 999,
+        }}
+      >
+        <ActivityIndicator size="large" color={APP_COLORS.primary} />
+        <Text style={{ color: APP_COLORS.white, marginTop: 12, fontSize: 14 }}>
+          Starting trip...
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -196,7 +196,6 @@ const StartTripForm = () => {
           <Text className="text-textSecondary text-base mt-2">
             Odometer Reading *
           </Text>
-
           <Controller
             name="start_km"
             control={control}
@@ -213,6 +212,7 @@ const StartTripForm = () => {
             )}
           />
         </View>
+
         <View>
           <Text className="text-textSecondary text-base mt-2">
             Dashboard Photo *
@@ -229,6 +229,7 @@ const StartTripForm = () => {
             Photo must clearly show the odometer reading
           </Text>
         </View>
+
         <View>
           <Text className="text-textSecondary text-base mt-2">
             Vehicle Photos *
@@ -257,7 +258,7 @@ const StartTripForm = () => {
               />
               <TripImageUpload
                 name="Right Image"
-                pickImageCamera={rightImage.pickImage}
+                pickImageCamera={rightImage.pickImageCamera}
                 uploading={rightImage.uploading}
                 preview={rightImage.preview}
               />
@@ -267,22 +268,22 @@ const StartTripForm = () => {
             Photo must clearly show the odometer reading
           </Text>
         </View>
+
         <TripCurrentLocation
           location={location}
           displayCurrentAddress={displayCurrentAddress}
           requestLocation={requestLocation}
         />
+
         <View className="items-center mt-6">
           <Button
-            text={"Start Trip"}
+            text={isLoading ? "Starting Trip..." : "Start Trip"}
             classname="w-full m-2"
             onPress={handleSubmit(
               (data) => onSubmit(data),
-              (errors) => {
-                toast.error("Please fill in all required fields");
-              },
+              () => toast.error("Please fill in all required fields"),
             )}
-            disabled={isPending}
+            disabled={isLoading}
             style={{ width: "100%" }}
           />
         </View>

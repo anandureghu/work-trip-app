@@ -47,8 +47,8 @@ export const useCreateTripMutation = () => {
   return useMutation({
     mutationFn: (data: TripCreate) => tripApi.create(data),
 
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: tripKeys.all });
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: tripKeys.all });
       // toast.success("Trip started successfully");
     },
 
@@ -67,9 +67,12 @@ export const useEditTripMutation = () => {
     mutationFn: ({ id, data }: { id: string; data: TripEdit }) =>
       tripApi.edit(id, data),
 
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: tripKeys.all });
-      // toast.success("Trip started successfully");
+    onSuccess: async () => {
+      await qc.invalidateQueries({
+        queryKey: [tripKeys.all],
+      });
+      await qc.refetchQueries({ queryKey: tripKeys.today() }); // ✅ force refetch
+      await qc.refetchQueries({ queryKey: tripKeys.latest() });
     },
 
     onError: () => toast.error("Failed to start trip. Please try again"),

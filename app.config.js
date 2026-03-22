@@ -22,7 +22,11 @@ export default {
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: "com.anandureghu.worktripapp",
-      permissions: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      permissions: [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+      ],
       config: {
         googleMaps: {
           apiKey: process.env.EXPO_GOOGLE_MAPS_API_KEY,
@@ -55,6 +59,7 @@ export default {
             "Allow ${PRODUCT_NAME} to use your location to track trip start and end points.",
         },
       ],
+      "@react-native-google-signin/google-signin",
     ],
     experiments: {
       typedRoutes: true,

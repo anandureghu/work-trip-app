@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/supabase";
-import GoogleSignInButton from "@/module/auth/google-sign-in-button";
+import { APP_COLORS } from "@/lib/consts";
+import GoogleSignInButton from "@/module/auth/components/google-sign-in-button";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
@@ -33,7 +34,7 @@ export default function LoginScreen() {
         {/* Logo */}
         <View style={styles.logoWrapper}>
           <View style={styles.logoBox}>
-            <Ionicons name="car-outline" size={32} color="#1e90ff" />
+            <Ionicons name="car-outline" size={32} color={APP_COLORS.primary} />
           </View>
 
           <Text style={styles.title}>TripTrack Pro</Text>

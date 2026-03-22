@@ -1,42 +1,23 @@
 import { AuthContext } from "@/hooks/use-auth-context";
 import { supabase } from "@/integrations/supabase/supabase";
-import type { Session } from "@supabase/supabase-js";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { Session } from "@supabase/supabase-js";
 import { PropsWithChildren, useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { toast } from "sonner-native";
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Fetch the session once, and subscribe to auth state changes
   useEffect(() => {
-    const fetchSession = async () => {
-      setIsLoading(true);
-
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
-
-      if (error) {
-        console.error("Error fetching session:", error);
-      }
-
-      setSession(session);
-      setIsLoading(false);
-    };
-
-    fetchSession();
-
     const checkWhitelistAndAuthLinking = async (session: Session) => {
-      setIsLoading(true);
       const email = session.user.email;
 
-      // Safety check
       if (!email) {
         await supabase.auth.signOut();
-        Alert.alert("No email found for this account.");
+        toast.error("No email found for this account.");
+        setIsLoading(false);
         return;
       }
 
@@ -46,10 +27,10 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         .eq("email", email.toLowerCase())
         .maybeSingle();
 
-      // ❌ DB error or user not found → deny
       if (error || !userRecord) {
+        await GoogleSignin.signOut();
         await supabase.auth.signOut();
-        Alert.alert(
+        toast.error(
           "Access denied. You are not authorized to use this application.",
         );
         setIsLoading(false);
@@ -57,15 +38,15 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       }
 
       if (userRecord.role === "EMPLOYEE" && !userRecord.is_active) {
+        await GoogleSignin.signOut();
         await supabase.auth.signOut();
-        Alert.alert("Your employee account is inactive.");
+        toast.error("Your employee account is inactive.");
         setIsLoading(false);
         return;
       }
 
       const { data } = await supabase.auth.getUser();
 
-      // Auth Linking
       if (!userRecord.auth_user_id) {
         await supabase
           .from("users")
@@ -79,47 +60,33 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           .update({ avatar_url: data?.user?.user_metadata.avatar_url })
           .eq("email", data?.user?.email);
       }
-      // ✅ Allowed (ADMIN or active EMPLOYEE)
-      setIsLoading(false);
+
+      const { data: profileData } = await supabase
+        .from("users")
+        .select("*")
+        .eq("auth_user_id", session.user.id)
+        .single();
+
+      setProfile(profileData);
+      setSession(session); // ✅ set session only here
+      setIsLoading(false); // ✅ set false only after everything
     };
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session && (_event === "SIGNED_IN" || _event === "INITIAL_SESSION")) {
-        checkWhitelistAndAuthLinking(session);
+        checkWhitelistAndAuthLinking(session); // handles setSession and setIsLoading
+      } else {
+        // logged out
+        setSession(null);
+        setProfile(null);
+        setIsLoading(false); // ✅ stop loading for logged out
       }
-      setSession(session);
     });
 
-    // Cleanup subscription on unmount
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
-
-  // Fetch the profile when the session changes
-  useEffect(() => {
-    const fetchProfile = async () => {
-      setIsLoading(true);
-
-      if (session) {
-        const { data } = await supabase
-          .from("users")
-          .select("*")
-          .eq("auth_user_id", session.user.id)
-          .single();
-
-        setProfile(data);
-      } else {
-        setProfile(null);
-      }
-
-      setIsLoading(false);
-    };
-
-    fetchProfile();
-  }, [session]);
 
   return (
     <AuthContext.Provider

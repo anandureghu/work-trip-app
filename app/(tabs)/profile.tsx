@@ -3,7 +3,7 @@ import Dialog from "@/components/Dialog";
 import ProfileButton from "@/components/MenuButton";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { APP_COLORS } from "@/lib/consts";
-import SignOutButton from "@/module/auth/sign-out-button";
+import SignOutButton from "@/module/auth/components/sign-out-button";
 import LanguagePicker from "@/module/profile/components/LanguagePicker";
 import { useUserQuery } from "@/module/profile/hooks";
 import { router } from "expo-router";
