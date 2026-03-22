@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/supabase";
 import { decode } from "base64-arraybuffer";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
+import { toast } from "sonner-native";
 
 interface useImageUploadProps {
   bucket: string;
@@ -16,6 +17,7 @@ interface useImageUploadResponse {
   uploading: boolean;
   pickAndUpload: () => Promise<void>;
   pickImage: () => void;
+  pickImageCamera: () => void;
   upload: (path: string) => Promise<string>;
   asset: ImagePicker.ImagePickerAsset | null;
   reset: () => void;
@@ -97,6 +99,35 @@ export const useImageUpload = ({
     setPreview(selected.uri);
   };
 
+  const pickImageCamera = async () => {
+    const enabled = await ImagePicker.requestCameraPermissionsAsync();
+    if (!enabled) {
+      toast.error("Please enable Camera permissions in your device settings");
+      return;
+    }
+    const { status } = await ImagePicker.getCameraPermissionsAsync();
+
+    if (status !== "granted") {
+      toast.error("Please enable Camera permissions in your device settings");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+      base64: true,
+    });
+
+    if (result.canceled || !result.assets[0]) return;
+
+    const selected = result.assets[0];
+
+    setAsset(selected);
+    setPreview(selected.uri);
+  };
+
   // 🚀 Upload AFTER trip created
   const upload = async (path: string) => {
     if (!asset || !asset.base64) {
@@ -127,5 +158,14 @@ export const useImageUpload = ({
 
   const reset = () => setPreview(null);
 
-  return { preview, uploading, pickAndUpload, reset, pickImage, upload, asset };
+  return {
+    preview,
+    uploading,
+    pickAndUpload,
+    reset,
+    pickImage,
+    pickImageCamera,
+    upload,
+    asset,
+  };
 };

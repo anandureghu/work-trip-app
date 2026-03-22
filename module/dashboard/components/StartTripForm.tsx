@@ -220,7 +220,7 @@ const StartTripForm = () => {
           <View className="justify-center flex-row items-center gap-2 mt-2">
             <TripImageUpload
               name="Dashboard Image"
-              pickImage={dashboardImage.pickImage}
+              pickImageCamera={dashboardImage.pickImageCamera}
               uploading={dashboardImage.uploading}
               preview={dashboardImage.preview}
             />
@@ -237,13 +237,13 @@ const StartTripForm = () => {
             <View className="justify-center flex-row items-center gap-2 mt-2">
               <TripImageUpload
                 name="Front Image"
-                pickImage={frontImage.pickImage}
+                pickImageCamera={frontImage.pickImageCamera}
                 uploading={frontImage.uploading}
                 preview={frontImage.preview}
               />
               <TripImageUpload
                 name="Back Image"
-                pickImage={backImage.pickImage}
+                pickImageCamera={backImage.pickImageCamera}
                 uploading={backImage.uploading}
                 preview={backImage.preview}
               />
@@ -251,13 +251,13 @@ const StartTripForm = () => {
             <View className="justify-center flex-row items-center gap-2 mt-2">
               <TripImageUpload
                 name="Left Image"
-                pickImage={leftImage.pickImage}
+                pickImageCamera={leftImage.pickImageCamera}
                 uploading={leftImage.uploading}
                 preview={leftImage.preview}
               />
               <TripImageUpload
                 name="Right Image"
-                pickImage={rightImage.pickImage}
+                pickImageCamera={rightImage.pickImage}
                 uploading={rightImage.uploading}
                 preview={rightImage.preview}
               />

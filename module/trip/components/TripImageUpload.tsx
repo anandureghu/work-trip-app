@@ -6,6 +6,8 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 interface TripImageUploadProps {
   name?: string;
   pickImage?: () => void;
+  pickImageCamera?: () => void;
+
   uploading?: boolean;
   preview?: string | null;
 }
@@ -13,12 +15,13 @@ interface TripImageUploadProps {
 const TripImageUpload = ({
   name,
   pickImage,
+  pickImageCamera,
   uploading,
   preview,
 }: TripImageUploadProps) => {
   return (
     <TouchableOpacity
-      onPress={pickImage}
+      onPress={pickImageCamera}
       className="bg-cardElevated border-textMuted rounded-xl p-3 justify-center items-center flex-1"
       style={{
         height: 150,
