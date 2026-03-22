@@ -16,17 +16,36 @@ import "./global.css";
 import { SplashScreenController } from "@/components/splash-screen-controller";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { APP_COLORS } from "@/lib/consts";
 import AuthProvider from "@/providers/auth-provider";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ActivityIndicator, View } from "react-native";
 
 export const unstable_settings = {
   anchor: "(tabs)",
 };
 
+GoogleSignin.configure({
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_AUTH_WEB_CLIENT_ID, // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+});
+
 const queryClient = new QueryClient();
 
 function RootNavigator() {
-  const { isLoggedIn } = useAuthContext();
+  const { isLoggedIn, isLoading } = useAuthContext();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: APP_COLORS.background }}>
+        <ActivityIndicator
+          size="large"
+          color={APP_COLORS.primary}
+          style={{ flex: 1 }}
+        />
+      </View>
+    );
+  }
   return (
     <GestureHandlerRootView>
       <Stack

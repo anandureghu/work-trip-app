@@ -1,10 +1,10 @@
-import GoogleSignInButton from "@/module/auth/google-sign-in-button";
 import { supabase } from "@/integrations/supabase/supabase";
+import { APP_COLORS } from "@/lib/consts";
+import GoogleSignInButton from "@/module/auth/components/google-sign-in-button";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -12,11 +12,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 export default function LoginScreen() {
-  // const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function signInWithEmail() {
@@ -25,7 +24,7 @@ export default function LoginScreen() {
       email: email,
       password: "password",
     });
-    if (error) Alert.alert(error.message);
+    if (error) toast.error(error.message);
     setLoading(false);
   }
 
@@ -35,7 +34,7 @@ export default function LoginScreen() {
         {/* Logo */}
         <View style={styles.logoWrapper}>
           <View style={styles.logoBox}>
-            <Ionicons name="car-outline" size={32} color="#1e90ff" />
+            <Ionicons name="car-outline" size={32} color={APP_COLORS.primary} />
           </View>
 
           <Text style={styles.title}>TripTrack Pro</Text>
@@ -54,35 +53,6 @@ export default function LoginScreen() {
             style={styles.input}
           />
         </View>
-
-        {/* Password */}
-        {/* <Text style={[styles.label, { marginTop: 20 }]}>Password</Text>
-        <View style={styles.inputWrapper}>
-          <Ionicons name="lock-closed-outline" size={20} color="#7b8ca3" />
-          <TextInput
-            placeholder="Enter password"
-            placeholderTextColor="#7b8ca3"
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-            secureTextEntry={!passwordVisible}
-            style={styles.input}
-          />
-          <TouchableOpacity
-            onPress={() => setPasswordVisible(!passwordVisible)}
-          >
-            <Ionicons
-              name={passwordVisible ? "eye-off-outline" : "eye-outline"}
-              size={20}
-              color="#7b8ca3"
-            />
-          </TouchableOpacity>
-        </View> */}
-
-        {/* Forgot */}
-        {/* <TouchableOpacity style={styles.forgotWrapper}>
-          <Text style={styles.forgot}>Forgot Password?</Text>
-        </TouchableOpacity> */}
-
         {/* Login */}
         <TouchableOpacity
           style={styles.loginButton}
