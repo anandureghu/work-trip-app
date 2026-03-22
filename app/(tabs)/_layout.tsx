@@ -1,11 +1,16 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import React from "react";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useAuthContext } from "@/hooks/use-auth-context";
 import { APP_COLORS } from "@/lib/consts";
 
 export default function TabLayout() {
+  const { isLoggedIn } = useAuthContext();
+  if (!isLoggedIn) {
+    router.navigate("/(auth)/login");
+  }
   return (
     <Tabs
       screenOptions={{

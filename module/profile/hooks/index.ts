@@ -19,8 +19,8 @@ export const useEditUserMutation = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UserEdit }) =>
       userApi.edit(id, data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: userKeys.all });
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: userKeys.all });
     },
     onError: (e) => toast.error("Failed to update profile. Please try again"),
   });
