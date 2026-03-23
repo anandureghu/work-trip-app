@@ -30,7 +30,9 @@ const EditProfile = () => {
         },
       );
     },
-    onError: () => {},
+    onError: () => {
+      toast.error("Image Update Unsuccessfull.Try again");
+    },
   });
 
   return (
@@ -41,6 +43,8 @@ const EditProfile = () => {
           showEditButton={true}
           uploading={uploading}
           onPress={pickAndUpload}
+          width={150}
+          height={150}
         />
       </View>
       <ProfileForm
@@ -54,7 +58,7 @@ const EditProfile = () => {
             {
               onSuccess: () => {
                 toast.success(t("edit_profile.profile_updated"));
-                router.navigate("/(tabs)/profile");
+                router.replace("/(tabs)/profile");
               },
             },
           );
