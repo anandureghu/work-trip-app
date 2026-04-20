@@ -1,0 +1,137 @@
+import { supabase } from "@/integrations/supabase/supabase";
+
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  isSuccessResponse,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+
+import { toast } from "sonner-native";
+
+export default function GoogleSignInButton() {
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+
+  const signIn = async () => {
+    if (loading) return;
+
+    try {
+      setLoading(true);
+
+      await GoogleSignin.hasPlayServices();
+
+      const response =
+        await GoogleSignin.signIn();
+
+      if (isSuccessResponse(response)) {
+        if (response.data.idToken) {
+          const { error } =
+            await supabase.auth.signInWithIdToken({
+              provider: "google",
+              token: response.data.idToken,
+            });
+
+          if (error) {
+            console.error(error.message);
+            toast.error(
+              t("login.sign_in_error"),
+            );
+            return;
+          }
+        }
+      } else {
+        toast.error(t("login.sign_in_cancelled"));
+      }
+    } catch (error) {
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.IN_PROGRESS:
+            break;
+
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            toast.error(
+              t("login.play_services_not_available"),
+            );
+            break;
+
+          default:
+            toast.error(
+              t("login.sign_in_error"),
+            );
+        }
+      } else {
+        toast.error(
+          t("login.sign_in_error"),
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={signIn}
+      disabled={loading}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#ffffff",
+        borderWidth: 1,
+        borderColor: "#dbdbdb",
+        borderRadius: 4,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        justifyContent: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+        opacity: loading ? 0.7 : 1,
+      }}
+      activeOpacity={1}
+    >
+      {loading ? (
+        <ActivityIndicator
+          size="small"
+          color="#757575"
+          style={{ marginRight: 10 }}
+        />
+      ) : (
+        <Image
+          source={require("@/assets/google-logo.png")}
+          style={{
+            width: 24,
+            height: 24,
+            marginRight: 10,
+          }}
+        />
+      )}
+
+      <Text
+        style={{
+          fontSize: 16,
+          color: "#757575",
+          fontFamily: "Roboto-Regular",
+          fontWeight: "500",
+        }}
+      >
+        {loading
+          ? t("login.sign_in_loading")
+          : t("login.google_sign_in")}
+      </Text>
+    </TouchableOpacity>
+  );
+}

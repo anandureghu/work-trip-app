@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { useUserForm, useUserQuery } from "../hooks";
 import { UserEdit } from "../schemas/user.schema";
 
@@ -26,6 +26,9 @@ const ProfileForm = ({ onSubmit, isSubmitting }: ProfileFormProps) => {
       });
     }
   }, [user, reset]);
+
+  const err = (msg?: string) => msg ? t(msg) : undefined;
+
   return (
     <View className="flex-1">
       <View className="flex-1 mx-6 mt-10 mb-6 gap-6">
@@ -35,8 +38,9 @@ const ProfileForm = ({ onSubmit, isSubmitting }: ProfileFormProps) => {
           render={({ field, fieldState }) => (
             <Input
               {...field}
-              label={t("edit_profile.name")}
-              error={fieldState.error?.message}
+              label={t("profile.edit_profile.name")}
+              error={err(fieldState.error?.message)}
+              onSubmitEditing={Keyboard.dismiss}
             />
           )}
         />
@@ -44,7 +48,8 @@ const ProfileForm = ({ onSubmit, isSubmitting }: ProfileFormProps) => {
         <Input
           value={user?.email}
           disabled={true}
-          label={t("edit_profile.email")}
+          label={t("profile.edit_profile.email")}
+          onSubmitEditing={Keyboard.dismiss}
         />
 
         <Controller
@@ -53,19 +58,21 @@ const ProfileForm = ({ onSubmit, isSubmitting }: ProfileFormProps) => {
           render={({ field, fieldState }) => (
             <Input
               {...field}
-              label={t("edit_profile.phone")}
-              error={fieldState.error?.message}
+              value={field.value?.toString() ?? ""}
+              label={t("profile.edit_profile.phone")}
+              error={err(fieldState.error?.message)}
+              onSubmitEditing={Keyboard.dismiss}
             />
           )}
         />
       </View>
       <Button
-        text={t("edit_profile.save")}
+        text={t("common.save")}
         onPress={handleSubmit((data) => onSubmit(data))}
         disabled={isSubmitting}
       />
       <Button
-        text={t("edit_profile.cancel")}
+        text={t("common.cancel")}
         onPress={() => router.navigate("/profile")}
         disabled={isSubmitting}
         variant="danger"

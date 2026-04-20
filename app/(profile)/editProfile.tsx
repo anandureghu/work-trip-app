@@ -18,19 +18,21 @@ const EditProfile = () => {
     path: user?.id,
     onUpload: (url) => {
       if (!user?.auth_user_id) {
-        toast.error("No Active Session");
+        toast.error(t("errors.no_active_session"));
         return;
       }
       updateMutation.mutate(
         { id: user.auth_user_id, data: { avatar_url: url } },
         {
           onSuccess: () => {
-            toast.success("Profile Picture Updated");
+            toast.success(t("profile.edit_profile.avatar_updated"));
           },
         },
       );
     },
-    onError: () => {},
+    onError: () => {
+      toast.error(t("profile.edit_profile.avatar_update_error"));
+    },
   });
 
   return (
@@ -41,6 +43,8 @@ const EditProfile = () => {
           showEditButton={true}
           uploading={uploading}
           onPress={pickAndUpload}
+          width={150}
+          height={150}
         />
       </View>
       <ProfileForm
@@ -53,8 +57,8 @@ const EditProfile = () => {
             { id: user.auth_user_id, data: data },
             {
               onSuccess: () => {
-                toast.success(t("edit_profile.profile_updated"));
-                router.navigate("/(tabs)/profile");
+                toast.success(t("profile.edit_profile.profile_updated"));
+                router.replace("/(tabs)/profile");
               },
             },
           );

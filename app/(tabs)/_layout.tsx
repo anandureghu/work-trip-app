@@ -4,8 +4,10 @@ import React from "react";
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { APP_COLORS } from "@/lib/consts";
+import { useTranslation } from "react-i18next";
 
 export default function TabLayout() {
+  const { t } = useTranslation();
   return (
     <Tabs
       screenOptions={{
@@ -15,13 +17,14 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: APP_COLORS.background,
           borderTopColor: APP_COLORS.borderSubtle,
+          paddingBottom: 10,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: t("common.home_tab"),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="house.fill" color={color} />
           ),
@@ -30,7 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="history"
         options={{
-          title: "History",
+          title: t("common.history_tab"),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="clock.arrow.circlepath" color={color} />
           ),
@@ -39,18 +42,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: t("common.profile_tab"),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="person.2" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="gearshape.fill" color={color} />
           ),
         }}
       />

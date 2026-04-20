@@ -1,22 +1,58 @@
-import TitleLabel from "@/components/title-label";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { calculateTotalWorkTime } from "@/lib/calculateWork";
 import { APP_COLORS } from "@/lib/consts";
+import { useLatestTripQuery } from "@/module/trip/hooks";
+import { useWorkByTripQuery } from "@/module/work/hooks";
 import React from "react";
-import { View } from "react-native";
-import StatCard from "./StatCard";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
 
 const TodaysActivity = () => {
+  const { t } = useTranslation();
+  const { data: trip } = useLatestTripQuery();
+  const { data: works } = useWorkByTripQuery({ tripId: trip?.id });
+
+  const totalWorks = calculateTotalWorkTime(works ?? []);
   return (
-    <View className="mt-5">
-      <TitleLabel title="Today's Activity" />
-      <View className="flex-row items-center justify-between mt-3">
-        <StatCard icon="time" label="Hours" value="6h 12m" />
-        <StatCard
-          icon="speedometer-sharp"
-          label="Miles"
-          value="45.2 mi"
-          color={APP_COLORS.purple}
+    <View
+      className="flex-1 flex-col items-center justify-center border border-borderSubtle border-dashed gap-2 rounded-lg"
+      style={{
+        borderWidth: 1,
+        borderColor: APP_COLORS.borderSubtle,
+        minHeight: 150,
+      }}
+    >
+      <View
+        className="rounded-full p-1 items-center justify-center"
+        style={{
+          backgroundColor: trip
+            ? APP_COLORS.primaryShadow
+            : APP_COLORS.textMutedShadow,
+          borderRadius: 100,
+        }}
+      >
+        <IconSymbol
+          size={28}
+          name="clock.arrow.circlepath"
+          color={trip ? APP_COLORS.primary : APP_COLORS.textMuted}
         />
       </View>
+      <Text
+        className="font-bold text-xl"
+        style={{ color: trip ? APP_COLORS.textPrimary : APP_COLORS.textMuted }}
+      >
+        {t("dashboard.todays_activity.hours_worked")}
+      </Text>
+      <Text
+        className="text-2xl font-bold"
+        style={{
+          color: trip ? APP_COLORS.textPrimary : APP_COLORS.textMuted,
+          fontSize: 28,
+          lineHeight: 32,
+        }}
+      >
+        {totalWorks.formatted ?? "00h 00m"}
+      </Text>
     </View>
   );
 };

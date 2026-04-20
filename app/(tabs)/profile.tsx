@@ -1,9 +1,9 @@
 import Avatar from "@/components/Avatar";
-import Dialog from "@/components/dialog";
+import Dialog from "@/components/Dialog";
 import ProfileButton from "@/components/MenuButton";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { APP_COLORS } from "@/lib/consts";
-import SignOutButton from "@/module/auth/sign-out-button";
+import SignOutButton from "@/module/auth/components/sign-out-button";
 import LanguagePicker from "@/module/profile/components/LanguagePicker";
 import { useUserQuery } from "@/module/profile/hooks";
 import { router } from "expo-router";
@@ -21,7 +21,7 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="mt-10 relative">
-        <Avatar uri={user?.avatar_url} />
+        <Avatar uri={user?.avatar_url} width={150} height={150} />
         <TouchableOpacity
           style={{
             position: "absolute",
@@ -30,7 +30,7 @@ const ProfileScreen = () => {
             borderRadius: "50%",
           }}
           activeOpacity={0.8}
-          onPress={() => router.navigate("/(profile)/edit-profile")}
+          onPress={() => router.navigate("/(profile)/editProfile")}
           className="rounded-full items-center justify-center"
         >
           <IconSymbol
@@ -58,7 +58,7 @@ const ProfileScreen = () => {
             </>
           )}
         </View>
-        <Text className="text-sm text-primary">{user?.role}</Text>
+        <Text className="text-sm text-primary">{user?.role === "ADMIN" ? t("profile.role.admin") : t("profile.role.employee")}</Text>
       </View>
       <View className="flex-1 mx-6 mt-10 mb-6 gap-6">
         <ProfileButton
@@ -67,8 +67,8 @@ const ProfileScreen = () => {
           onPress={() => console.log("'Notification")}
         />
         <ProfileButton
-          text={t("profile.language")}
-          mutedText={t("profile.language_current")}
+          text={t("profile.language_picker.title")}
+          mutedText={t("profile.language")}
           onPress={() => setLanguageModalOpen(true)}
         />
       </View>
